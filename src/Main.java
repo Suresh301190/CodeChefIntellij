@@ -10,6 +10,8 @@ public class Main {
     private static final BigInteger ten = BigInteger.valueOf(10L), two = BigInteger.valueOf(2L);
     private static final double e = 1e-14;
     private static Parser p;
+    /** Used to decide if we are running in local or not */
+    private static boolean DEBUG = false;
     private StringBuilder sb = new StringBuilder(), osb = new StringBuilder();
     private int A, B, N, M, P, Q, R, K, X, Y, L, ans, min, max, num, sum;
     private long Al, Bl, Nl, Ml, Pl, Ql, Rl, Kl, Xl, Yl, ansl, minl, maxl, numl, suml;
@@ -21,50 +23,6 @@ public class Main {
     private PriorityQueue<Integer> minHeap = new PriorityQueue<>();
     private PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
     private ArrayList<BigInteger> prime;
-
-    /**
-     * Used to decide if we are running in local or not
-     */
-    private static boolean DEBUG = false;
-
-    /**
-     * Solve which actually has the problem solving code.
-     */
-    private void solve() throws Exception {
-        int r, g, b;
-        for (int run = 1, testCount = p.nextInt(); run <= testCount; run++) {
-            A = p.nextInt();
-            String rooms = p.nextString();
-            r = g = b = 0;
-            for (int i = 0; i < A; i++) {
-                switch (rooms.charAt(i)) {
-                    case 'R':
-                        r++;
-                        break;
-                    case 'G':
-                        g++;
-                        break;
-                    case 'B':
-                        b++;
-                        break;
-                    default:
-                        throw new RuntimeException("Invalid Input");
-                }
-            }
-
-            if (DEBUG) {
-                sb.append("Iter : ").append(run).append("\n");
-            }
-
-            max = Math.max(r, Math.max(g, b));
-
-            // append result for case
-            sb.append(A - max).append("\n");
-        }
-
-        // print the output
-        out.print(sb.toString());
-    }
 
     /**
      * Main function which initializes the {@link Parser} and then calls the {@link Main#solve()}
@@ -85,10 +43,45 @@ public class Main {
     }
 
     /**
+     * Solve which actually has the problem solving code.
+     */
+    private void solve() {
+        for (int run = 1, testCount = p.nextInt(); run <= testCount; run++) {
+            nums = new int[3];
+            for (int i = 0; i < nums.length; i++) {
+                nums[i] = p.nextInt();
+            }
+            Kl = p.nextLong();
+
+            Arrays.sort(nums);
+
+            ansl = 0L;
+            for (int i = 0; i < nums.length; i++) {
+                if (Kl <= nums[i]) {
+                    ansl += (nums.length - i) * (Kl - 1) + 1;
+                    break;
+                } else {
+                    ansl += nums[i];
+                }
+            }
+
+            if (DEBUG) {
+                sb.append("Iter : ").append(run).append("\n");
+            }
+
+            // append result for case
+            sb.append(ansl).append("\n");
+        }
+
+        // print the output
+        out.print(sb.toString());
+    }
+
+    /**
      * Parser class to parse the input fron STDIN or a File
      */
     private static class Parser {
-        final private int BufferSize = 65536, Init = 0;
+        private static final int BufferSize = 65536, ZERO = 0;
         private BufferedInputStream bis;
         private byte read;
         private int BufferPointer, BufferEnd;
@@ -98,23 +91,21 @@ public class Main {
          * Initialize the buffer to read from
          *
          * @param in stream can be any valid stream
-         * @throws Exception
          */
         Parser(InputStream in) throws Exception {
             if (in == null)
                 throw new IllegalArgumentException("Stream can't be empty");
             bis = new BufferedInputStream(in);
             BufferPointer = 0;
-            BufferEnd = bis.read(buffer, Init, BufferSize);
+            BufferEnd = bis.read(buffer, ZERO, BufferSize);
         }
 
         /**
          * Parse the next input as an int, skips the buffer for any unpritable characters
          *
          * @return the parsed int value
-         * @throws Exception
          */
-        public int nextInt() throws Exception {
+        int nextInt() {
             int num = 0;
             read = readNext();
             while (read <= ' ') read = readNext();
@@ -132,9 +123,8 @@ public class Main {
          * parse the next input as a long, skips the buffer for any unpritable characters
          *
          * @return the parsed long  value
-         * @throws Exception
          */
-        public long nextLong() throws Exception {
+        long nextLong() {
             long num = 0L;
             read = readNext();
             while (read <= ' ') read = readNext();
@@ -152,9 +142,8 @@ public class Main {
          * Read the next char, skips the buffer for any unpritable characters
          *
          * @return the next char
-         * @throws Exception
          */
-        public char nextChar() throws Exception {
+        char nextChar() {
             read = readNext();
             while (read <= ' ') read = readNext();
             return (char) read;
@@ -164,9 +153,8 @@ public class Main {
          * Reads the next char
          *
          * @return the next char
-         * @throws Exception
          */
-        public char nextAnyChar() throws Exception {
+        char nextAnyChar() {
             read = readNext();
             return (char) read;
         }
@@ -175,9 +163,8 @@ public class Main {
          * Read the continious stream and break @first unpritable characters including space
          *
          * @return the parsed {@link String}
-         * @throws Exception
          */
-        public String nextString() throws Exception {
+        String nextString() {
             StringBuilder sb = new StringBuilder("");
             read = readNext();
             while (read <= ' ') read = readNext();
@@ -192,9 +179,8 @@ public class Main {
          * Reads the complete line from the current index till '\n' is processed.
          *
          * @return the parsed line
-         * @throws Exception
          */
-        public String readLine() throws Exception {
+        String readLine() {
             StringBuilder sb = new StringBuilder("");
             read = readNext();
             while (read <= ' ') read = readNext();
@@ -207,10 +193,8 @@ public class Main {
 
         /**
          * Skip the next input
-         *
-         * @throws Exception
          */
-        public void nextSkip() throws Exception {
+        void nextSkip() {
             read = readNext();
             while (read <= ' ') read = readNext();
             read = readNext();
@@ -218,15 +202,19 @@ public class Main {
 
         }
 
-        private byte readNext() throws Exception {
+        private byte readNext() {
             if (BufferPointer == BufferEnd) fillBuffer();
             return buffer[BufferPointer++];
         }
 
-        private void fillBuffer() throws Exception {
-            BufferPointer = Init;
-            BufferEnd = bis.read(buffer, Init, BufferSize);
-            if (BufferEnd == -1) buffer[0] = -1;
+        private void fillBuffer() {
+            BufferPointer = ZERO;
+            try {
+                BufferEnd = bis.read(buffer, ZERO, BufferSize);
+                if (BufferEnd == -1) buffer[0] = -1;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
