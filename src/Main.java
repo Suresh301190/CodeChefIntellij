@@ -10,7 +10,7 @@ public class Main {
     private static final BigInteger ten = BigInteger.valueOf(10L), two = BigInteger.valueOf(2L);
     private static final double e = 1e-14;
     private static Parser p;
-    private StringBuilder sb, osb;
+    private StringBuilder sb = new StringBuilder(), osb = new StringBuilder();
     private int A, B, N, M, P, Q, R, K, X, Y, L, ans, min, max, num, sum;
     private long Al, Bl, Nl, Ml, Pl, Ql, Rl, Kl, Xl, Yl, ansl, minl, maxl, numl, suml;
     private int[] nums;
@@ -30,12 +30,45 @@ public class Main {
     /**
      * Solve which actually has the problem solving code.
      */
-    private void solve() {
+    private void solve() throws Exception {
+        int r, g, b;
+        for (int run = 1, testCount = p.nextInt(); run <= testCount; run++) {
+            A = p.nextInt();
+            String rooms = p.nextString();
+            r = g = b = 0;
+            for (int i = 0; i < A; i++) {
+                switch (rooms.charAt(i)) {
+                    case 'R':
+                        r++;
+                        break;
+                    case 'G':
+                        g++;
+                        break;
+                    case 'B':
+                        b++;
+                        break;
+                    default:
+                        throw new RuntimeException("Invalid Input");
+                }
+            }
 
+            if (DEBUG) {
+                sb.append("Iter : ").append(run).append("\n");
+            }
+
+            max = Math.max(r, Math.max(g, b));
+
+            // append result for case
+            sb.append(A - max).append("\n");
+        }
+
+        // print the output
+        out.print(sb.toString());
     }
 
     /**
      * Main function which initializes the {@link Parser} and then calls the {@link Main#solve()}
+     *
      * @param args cmd line args
      * @throws Exception
      */
@@ -157,6 +190,7 @@ public class Main {
 
         /**
          * Reads the complete line from the current index till '\n' is processed.
+         *
          * @return the parsed line
          * @throws Exception
          */
@@ -173,6 +207,7 @@ public class Main {
 
         /**
          * Skip the next input
+         *
          * @throws Exception
          */
         public void nextSkip() throws Exception {
