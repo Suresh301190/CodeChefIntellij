@@ -1,6 +1,15 @@
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.PriorityQueue;
+import java.util.TreeMap;
 
 public class Main {
 
@@ -10,7 +19,9 @@ public class Main {
     private static final BigInteger ten = BigInteger.valueOf(10L), two = BigInteger.valueOf(2L);
     private static final double e = 1e-14;
     private static Parser p;
-    /** Used to decide if we are running in local or not */
+    /**
+     * Used to decide if we are running in local or not
+     */
     private static boolean DEBUG = false;
     private StringBuilder sb = new StringBuilder(), osb = new StringBuilder();
     private int A, B, N, M, P, Q, R, K, X, Y, L, ans, min, max, num, sum;
@@ -47,30 +58,20 @@ public class Main {
      */
     private void solve() {
         for (int run = 1, testCount = p.nextInt(); run <= testCount; run++) {
-            nums = new int[3];
-            for (int i = 0; i < nums.length; i++) {
-                nums[i] = p.nextInt();
-            }
-            Kl = p.nextLong();
-
-            Arrays.sort(nums);
-
-            ansl = 0L;
-            for (int i = 0; i < nums.length; i++) {
-                if (Kl <= nums[i]) {
-                    ansl += (nums.length - i) * (Kl - 1) + 1;
-                    break;
-                } else {
-                    ansl += nums[i];
-                }
-            }
+            Nl = p.nextLong();
+            Ml = p.nextLong();
 
             if (DEBUG) {
                 sb.append("Iter : ").append(run).append("\n");
             }
 
-            // append result for case
-            sb.append(ansl).append("\n");
+            if (Nl == 2 || Ml == 2) {
+                sb.append("Yes\n");
+            } else if (Nl == 1 || Ml == 1 || ((Nl % 2) != 0 && (Ml % 2) != 0)) {
+                sb.append("No\n");
+            } else {
+                sb.append("Yes\n");
+            }
         }
 
         // print the output
