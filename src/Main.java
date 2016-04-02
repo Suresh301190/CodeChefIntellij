@@ -1,16 +1,26 @@
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.PriorityQueue;
+import java.util.TreeMap;
 
 public class Main {
 
     private static final PrintStream out = new PrintStream(System.out), err = new PrintStream(System.err);
-    private static final long mod109 = 1000000009L, mod107 = 1000000007L;
-    private static final int offset = (1 << ((int) Math.ceil((Math.log(mod109) / Math.log(2))))) - 1;
-    private static final BigInteger ten = BigInteger.valueOf(10L), two = BigInteger.valueOf(2L);
-    private static final double e = 1e-14;
+    private static final long MOD_109 = 1000000009L, MOD_107 = 1000000007L;
+    private static final int OFFSET = (1 << ((int) Math.ceil((Math.log(MOD_109) / Math.log(2))))) - 1;
+    private static final BigInteger TEN = BigInteger.valueOf(10L), TWO = BigInteger.valueOf(2L);
+    private static final double E = 1e-14;
     private static Parser p;
-    /** Used to decide if we are running in local or not */
+    /**
+     * Used to decide if we are running in local or not
+     */
     private static boolean DEBUG = false;
     private StringBuilder sb = new StringBuilder(), osb = new StringBuilder();
     private int A, B, N, M, P, Q, R, K, X, Y, L, ans, min, max, num, sum;
@@ -22,7 +32,6 @@ public class Main {
     private HashMap<Integer, Integer> hmap = new HashMap<>();
     private PriorityQueue<Integer> minHeap = new PriorityQueue<>();
     private PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
-    private ArrayList<BigInteger> prime;
 
     /**
      * Main function which initializes the {@link Parser} and then calls the {@link Main#solve()}
@@ -47,23 +56,10 @@ public class Main {
      */
     private void solve() {
         for (int run = 1, testCount = p.nextInt(); run <= testCount; run++) {
-            nums = new int[3];
-            for (int i = 0; i < nums.length; i++) {
-                nums[i] = p.nextInt();
-            }
+            Nl = p.nextLong();
             Kl = p.nextLong();
 
-            Arrays.sort(nums);
-
-            ansl = 0L;
-            for (int i = 0; i < nums.length; i++) {
-                if (Kl <= nums[i]) {
-                    ansl += (nums.length - i) * (Kl - 1) + 1;
-                    break;
-                } else {
-                    ansl += nums[i];
-                }
-            }
+            ansl = (Kl * Combinotorial.modPow(Kl - 1, Nl - 1, MOD_107)) % MOD_107;
 
             if (DEBUG) {
                 sb.append("Iter : ").append(run).append("\n");
@@ -215,6 +211,86 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Contains Combinotrial function like fast gcd, multiplicative, mod inverse of mod, etc
+     */
+    private static class Combinotorial {
+
+        /**
+         * Computs the multiplicative inverse of the given number in the essence
+         *
+         * @param number the number to find inverse for
+         * @param mod    against which inverse is required
+         * @return the inverse
+         */
+        static long inverse(long number, long mod) {
+            long in = 1L;
+            for (long i = mod - 2; i > 0; i >>= 1) {
+                if ((i & 1) == 1) {
+                    in = (in * number) % mod;
+                }
+                number = (number * number) % mod;
+            }
+            return in;
+        }
+
+        /**
+         * Computes the <code>(number * exponent) % mod</code> via binary exponentiation
+         *
+         * @param number   for which exponentiation is required
+         * @param exponent raised to power
+         * @param mod      agains which we find the value
+         * @return the result
+         */
+        static long modPow(long number, long exponent, long mod) {
+            number %= mod;
+            long result = 1L;
+            for (; exponent > 0; exponent >>= 1) {
+                if ((exponent & 1) == 1) {
+                    result = (result * number) % mod;
+                }
+                number = (number * number) % mod;
+            }
+            return result;
+        }
+
+        /**
+         * Computes GCD between two numbers using binary GCD algorithm
+         *
+         * @param u first number
+         * @param v second number
+         * @return the GCD
+         * @see <a href="https://en.wikipedia.org/wiki/Binary_GCD_algorithm#Iterative_version_in_C">Wiki Source</a>
+         */
+        static long gcd(long u, long v) {
+            long shift;
+
+            if (u == 0) return v;
+            if (v == 0) return u;
+
+            for (shift = 0; ((u | v) & 1) == 0; ++shift) {
+                u >>= 1;
+                v >>= 1;
+            }
+
+            while ((u & 1) == 0)
+                u >>= 1;
+
+            do {
+                while ((v & 1) == 0)
+                    v >>= 1;
+                if (u > v) {
+                    long t = v;
+                    v = u;
+                    u = t;
+                }
+                v = v - u;
+            } while (v != 0);
+
+            return u << shift;
         }
     }
 }

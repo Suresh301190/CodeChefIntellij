@@ -5,23 +5,22 @@ import java.util.Iterator;
 
 public class Primes {
 
-    static ArrayList<Integer> prime;
+    static ArrayList<Integer> primes;
 
     void setPrime(int num) {
-        // TODO Auto-generated method stub
         for (int i = 3; i < num; i++) {
             isPrime(i);
         }
     }
 
-    boolean isPrime(int num) {
+    private boolean isPrime(int num) {
         int sqrt = (int) Math.ceil(Math.sqrt(num)), n;
-        for (Iterator<Integer> iter = prime.iterator(); iter.hasNext(); ) {
-            n = iter.next();
+        for (Integer prime : primes) {
+            n = prime;
             if (n > sqrt) break;
             else if ((num % n) == 0) return false;
         }
-        prime.add(num);
+        primes.add(num);
         return true;
     }
 }
