@@ -57,16 +57,19 @@ public class Main {
     private void solve() {
         for (int run = 1, testCount = p.nextInt(); run <= testCount; run++) {
             Nl = p.nextLong();
-            Kl = p.nextLong();
-
-            ansl = (Kl * Combinotorial.modPow(Kl - 1, Nl - 1, MOD_107)) % MOD_107;
+            Ml = p.nextLong();
 
             if (DEBUG) {
                 sb.append("Iter : ").append(run).append("\n");
             }
 
-            // append result for case
-            sb.append(ansl).append("\n");
+            if (Nl == 2 || Ml == 2) {
+                sb.append("Yes\n");
+            } else if (Nl == 1 || Ml == 1 || ((Nl % 2) != 0 && (Ml % 2) != 0)) {
+                sb.append("No\n");
+            } else {
+                sb.append("Yes\n");
+            }
         }
 
         // print the output
